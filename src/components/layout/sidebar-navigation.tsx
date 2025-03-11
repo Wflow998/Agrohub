@@ -158,6 +158,12 @@ export default function SidebarNavigation({
       ],
     },
     {
+      label: "Livestock Auctions",
+      icon: BarChart,
+      href: "/auctions",
+      roles: ["farmer", "retailer", "distributor", "consumer"],
+    },
+    {
       label: "Farm Analytics",
       icon: BarChart,
       href: "/analytics",

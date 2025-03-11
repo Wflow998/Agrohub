@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
-import { PlusCircle, ChevronLeft, ChevronRight } from "lucide-react";
+import { PlusCircle, ChevronLeft, ChevronRight, Camera } from "lucide-react";
 import {
   Carousel,
   CarouselContent,
@@ -24,9 +24,17 @@ interface Story {
   user: {
     name: string;
     avatar: string;
+    role?: string;
   };
   viewed: boolean;
   timestamp: string;
+  content?: {
+    type: "image" | "video" | "text";
+    src?: string;
+    text?: string;
+    location?: string;
+    tags?: string[];
+  }[];
 }
 
 interface StoriesCarouselProps {
@@ -40,71 +48,7 @@ interface StoriesCarouselProps {
 }
 
 const StoriesCarousel = ({
-  stories = [
-    {
-      id: "1",
-      user: {
-        name: "Maria Rodriguez",
-        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=maria",
-      },
-      viewed: false,
-      timestamp: "2h",
-    },
-    {
-      id: "2",
-      user: {
-        name: "David Kimani",
-        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=david",
-      },
-      viewed: false,
-      timestamp: "4h",
-    },
-    {
-      id: "3",
-      user: {
-        name: "Sarah Ochieng",
-        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=sarah",
-      },
-      viewed: true,
-      timestamp: "8h",
-    },
-    {
-      id: "4",
-      user: {
-        name: "John Mwangi",
-        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=john",
-      },
-      viewed: true,
-      timestamp: "12h",
-    },
-    {
-      id: "5",
-      user: {
-        name: "Elizabeth Wanjiku",
-        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=elizabeth",
-      },
-      viewed: false,
-      timestamp: "1d",
-    },
-    {
-      id: "6",
-      user: {
-        name: "Michael Omondi",
-        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=michael",
-      },
-      viewed: true,
-      timestamp: "1d",
-    },
-    {
-      id: "7",
-      user: {
-        name: "Grace Akinyi",
-        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=grace",
-      },
-      viewed: false,
-      timestamp: "2d",
-    },
-  ],
+  stories = [],
   currentUser = {
     name: "John Farmer",
     avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=john",
@@ -114,8 +58,19 @@ const StoriesCarousel = ({
 }: StoriesCarouselProps) => {
   const [hoveredStory, setHoveredStory] = useState<string | null>(null);
 
+  // Group stories by user to show only one avatar per user
+  const userStories = stories.reduce<Record<string, Story>>((acc, story) => {
+    // If we haven't seen this user yet, or this story is newer than what we have
+    if (!acc[story.user.name] || !acc[story.user.name].viewed) {
+      acc[story.user.name] = story;
+    }
+    return acc;
+  }, {});
+
+  const uniqueStories = Object.values(userStories);
+
   return (
-    <Card className="w-full bg-card mb-6">
+    <Card className="w-full bg-card mb-6 border-none shadow-md overflow-hidden">
       <CardContent className="p-4">
         <Carousel
           opts={{
@@ -129,16 +84,18 @@ const StoriesCarousel = ({
             <CarouselItem className="basis-1/6 sm:basis-1/6 md:basis-1/7 lg:basis-1/8">
               <div className="flex flex-col items-center space-y-2">
                 <div className="relative">
-                  <Avatar className="h-16 w-16 border-2 border-background bg-muted">
-                    <AvatarImage src={currentUser.avatar} alt="Your avatar" />
-                    <AvatarFallback>
-                      {currentUser.name.charAt(0)}
-                    </AvatarFallback>
-                  </Avatar>
+                  <div className="h-16 w-16 rounded-full overflow-hidden bg-gradient-to-br from-primary/20 to-primary/40 flex items-center justify-center">
+                    <Avatar className="h-14 w-14 border-2 border-background">
+                      <AvatarImage src={currentUser.avatar} alt="Your avatar" />
+                      <AvatarFallback>
+                        {currentUser.name.charAt(0)}
+                      </AvatarFallback>
+                    </Avatar>
+                  </div>
                   <Button
                     size="icon"
                     variant="primary"
-                    className="absolute -bottom-2 -right-2 h-6 w-6 rounded-full bg-primary text-primary-foreground"
+                    className="absolute -bottom-2 -right-2 h-6 w-6 rounded-full bg-primary text-primary-foreground shadow-md"
                     onClick={onCreateStory}
                   >
                     <PlusCircle className="h-4 w-4" />
@@ -151,7 +108,7 @@ const StoriesCarousel = ({
             </CarouselItem>
 
             {/* Story Items */}
-            {stories.map((story) => (
+            {uniqueStories.map((story) => (
               <CarouselItem
                 key={story.id}
                 className="basis-1/6 sm:basis-1/6 md:basis-1/7 lg:basis-1/8"
@@ -160,30 +117,57 @@ const StoriesCarousel = ({
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <div
-                        className="flex flex-col items-center space-y-2 cursor-pointer"
+                        className="flex flex-col items-center space-y-2 cursor-pointer group"
                         onClick={() => onStoryClick(story.id)}
                         onMouseEnter={() => setHoveredStory(story.id)}
                         onMouseLeave={() => setHoveredStory(null)}
                       >
-                        <Avatar
-                          className={`h-16 w-16 border-2 ${story.viewed ? "border-muted" : "border-primary"}`}
+                        <div
+                          className={`h-16 w-16 rounded-full p-[2px] ${story.viewed ? "bg-muted" : "bg-gradient-to-br from-primary to-primary/70"}`}
                         >
-                          <AvatarImage
-                            src={story.user.avatar}
-                            alt={story.user.name}
-                          />
-                          <AvatarFallback>
-                            {story.user.name.charAt(0)}
-                          </AvatarFallback>
-                        </Avatar>
+                          <div className="h-full w-full rounded-full overflow-hidden border-2 border-background relative group-hover:scale-105 transition-transform">
+                            <img
+                              src={story.user.avatar}
+                              alt={story.user.name}
+                              className="h-full w-full object-cover"
+                            />
+                            {story.content &&
+                              story.content[0]?.type === "image" && (
+                                <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                  <Camera className="h-5 w-5 text-white" />
+                                </div>
+                              )}
+                          </div>
+                        </div>
                         <span className="text-xs font-medium text-center truncate w-full">
                           {story.user.name.split(" ")[0]}
                         </span>
                       </div>
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>{story.user.name}</p>
-                      <p className="text-xs opacity-70">{story.timestamp}</p>
+                      <p className="font-medium">{story.user.name}</p>
+                      {story.user.role && (
+                        <p className="text-xs text-muted-foreground">
+                          {story.user.role}
+                        </p>
+                      )}
+                      <p className="text-xs text-muted-foreground">
+                        {story.timestamp}
+                      </p>
+                      {story.content && story.content[0]?.tags && (
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {story.content[0].tags.slice(0, 2).map((tag) => (
+                            <span key={tag} className="text-xs text-primary">
+                              #{tag}
+                            </span>
+                          ))}
+                          {story.content[0].tags.length > 2 && (
+                            <span className="text-xs text-muted-foreground">
+                              +{story.content[0].tags.length - 2} more
+                            </span>
+                          )}
+                        </div>
+                      )}
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>

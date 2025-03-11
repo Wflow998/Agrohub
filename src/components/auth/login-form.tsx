@@ -28,8 +28,8 @@ export function LoginForm() {
     // Simulate login - in a real app, this would call an API
     setTimeout(() => {
       setIsLoading(false);
-      // Redirect directly to social feed instead of role selection
-      router.push("/social");
+      // Redirect to role selection
+      router.push("/role-selection");
     }, 1000);
   };
 

@@ -1,4 +1,4 @@
-import { SocialFeed } from "@/components/social/social-feed";
+import SocialFeed from "@/components/social/social-feed";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 
 export default function SocialPage() {
