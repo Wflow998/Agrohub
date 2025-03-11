@@ -12,7 +12,7 @@ interface WeatherWidgetProps {
 }
 
 export function WeatherWidget({
-  location = "Nairobi, Kenya",
+  location = "Maseru, Lesotho",
 }: WeatherWidgetProps) {
   // Mock weather data - in a real app, this would come from an API
   const weatherData = {

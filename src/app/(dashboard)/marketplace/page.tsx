@@ -4,6 +4,13 @@ import { ProductFilters } from "@/components/marketplace/product-filters";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function MarketplacePage() {
   // Mock products data
@@ -13,89 +20,95 @@ export default function MarketplacePage() {
       name: "Organic Tomatoes",
       description:
         "Fresh, locally grown organic tomatoes. Perfect for salads and cooking.",
-      price: 2.99,
+      price: 45.99,
       unit: "kg",
       image:
         "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=800&q=80",
       seller: {
-        name: "Green Valley Farm",
-        location: "Nairobi Region",
+        name: "Cape Town Organics",
+        location: "Western Cape, South Africa",
       },
       available: 50,
+      currency: "ZAR",
     },
     {
       id: "2",
       name: "Fresh Maize",
       description:
         "Sweet corn harvested this week. Great for roasting or boiling.",
-      price: 1.49,
+      price: 180.5,
       unit: "kg",
       image:
         "https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=800&q=80",
       seller: {
-        name: "Sunrise Farms",
-        location: "Central Region",
+        name: "Nairobi Fresh Produce",
+        location: "Nairobi, Kenya",
       },
       available: 100,
+      currency: "KES",
     },
     {
       id: "3",
       name: "Organic Kale",
       description:
         "Nutrient-rich kale grown without pesticides. Great for smoothies and salads.",
-      price: 3.29,
+      price: 35.5,
       unit: "bunch",
       image:
         "https://images.unsplash.com/photo-1524179091875-bf99a9a6af57?w=800&q=80",
       seller: {
-        name: "Healthy Greens",
-        location: "Western Region",
+        name: "Lesotho Highland Farms",
+        location: "Maseru, Lesotho",
       },
       available: 30,
+      currency: "LSL",
     },
     {
       id: "4",
       name: "Free-Range Eggs",
       description:
         "Farm fresh eggs from free-range chickens. Rich in flavor and nutrition.",
-      price: 4.99,
+      price: 75.99,
       unit: "dozen",
       image:
         "https://images.unsplash.com/photo-1598965675045-45c5e72c7d05?w=800&q=80",
       seller: {
         name: "Happy Hen Farm",
-        location: "Eastern Region",
+        location: "Eastern Cape, South Africa",
       },
       available: 20,
+      currency: "ZAR",
     },
     {
       id: "5",
       name: "Raw Honey",
       description:
         "Pure, unfiltered honey from local beekeepers. Perfect natural sweetener.",
-      price: 8.99,
+      price: 950.0,
       unit: "jar",
       image:
         "https://images.unsplash.com/photo-1587049352851-8d4e89133924?w=800&q=80",
       seller: {
         name: "Bee Haven",
-        location: "Central Region",
+        location: "Nakuru, Kenya",
       },
       available: 15,
+      currency: "KES",
     },
     {
       id: "6",
       name: "Fresh Avocados",
       description: "Creamy, ripe avocados. Perfect for guacamole or on toast.",
-      price: 5.49,
+      price: 28.5,
       unit: "kg",
       image:
         "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=800&q=80",
       seller: {
-        name: "Green Hills Farm",
-        location: "Coastal Region",
+        name: "Thaba Bosiu Farms",
+        location: "Leribe, Lesotho",
       },
       available: 40,
+      currency: "LSL",
     },
   ];
 
@@ -118,6 +131,17 @@ export default function MarketplacePage() {
               className="pl-8"
             />
           </div>
+          <Select defaultValue="USD">
+            <SelectTrigger className="w-[120px]">
+              <SelectValue placeholder="Currency" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="USD">USD ($)</SelectItem>
+              <SelectItem value="ZAR">ZAR (R)</SelectItem>
+              <SelectItem value="KES">KES (KSh)</SelectItem>
+              <SelectItem value="LSL">LSL (M)</SelectItem>
+            </SelectContent>
+          </Select>
           <Button>Search</Button>
         </div>
 

@@ -12,7 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AuctionList } from "@/components/auctions/auction-list";
 import { AuctionCalendar } from "@/components/auctions/auction-calendar";
 import { MyBids } from "@/components/auctions/my-bids";
-import { Plus, Filter, Calendar } from "lucide-react";
+import { Plus, Filter, Gavel } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -28,35 +28,31 @@ export default function AuctionsPage() {
     <DashboardLayout>
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">
-              Livestock Auctions
-            </h1>
-            <p className="text-muted-foreground">
-              Buy and sell livestock through secure auctions
-            </p>
+          <div className="flex items-center gap-2">
+            <Gavel className="h-8 w-8 text-primary" />
+            <div>
+              <h1 className="text-3xl font-bold tracking-tight">Auctions</h1>
+              <p className="text-muted-foreground">
+                Browse and participate in livestock and agricultural auctions
+              </p>
+            </div>
           </div>
-          <div className="flex flex-col sm:flex-row gap-2">
-            <Button variant="outline">
-              <Calendar className="mr-2 h-4 w-4" /> View Calendar
-            </Button>
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button>
-                  <Plus className="mr-2 h-4 w-4" /> Create Auction
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[600px]">
-                <DialogHeader>
-                  <DialogTitle>Create New Auction</DialogTitle>
-                  <DialogDescription>
-                    Enter details about your livestock auction
-                  </DialogDescription>
-                </DialogHeader>
-                <AuctionForm />
-              </DialogContent>
-            </Dialog>
-          </div>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button>
+                <Plus className="mr-2 h-4 w-4" /> Create Auction
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[600px]">
+              <DialogHeader>
+                <DialogTitle>Create New Auction</DialogTitle>
+                <DialogDescription>
+                  Enter details about your auction
+                </DialogDescription>
+              </DialogHeader>
+              <AuctionForm />
+            </DialogContent>
+          </Dialog>
         </div>
 
         <Tabs defaultValue="active">

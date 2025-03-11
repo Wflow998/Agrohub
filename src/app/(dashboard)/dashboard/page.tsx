@@ -9,7 +9,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { BarChart, Leaf, ShoppingCart, TrendingUp, Users } from "lucide-react";
+import {
+  BarChart,
+  Leaf,
+  ShoppingCart,
+  TrendingUp,
+  Users,
+  Landmark,
+} from "lucide-react";
+import Link from "next/link";
 
 export default function DashboardPage() {
   return (
@@ -64,14 +72,14 @@ export default function DashboardPage() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                Network Growth
+                Land Investments
               </CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
+              <Landmark className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">+28%</div>
+              <div className="text-2xl font-bold">3</div>
               <p className="text-xs text-muted-foreground">
-                +19 connections this month
+                +1 new investment opportunity
               </p>
             </CardContent>
           </Card>
@@ -104,9 +112,76 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
           <div className="col-span-3 grid gap-4 lg:grid-cols-1">
-            <WeatherWidget />
-            <CropRecommendations />
+            <WeatherWidget location="Maseru, Lesotho" />
+            <CropRecommendations location="Maseru Region" />
           </div>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <Card className="col-span-2">
+            <CardHeader>
+              <CardTitle>Quick Actions</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-4">
+                <Link href="/marketplace" passHref>
+                  <Button variant="outline" className="w-full justify-start">
+                    <ShoppingCart className="mr-2 h-4 w-4" />
+                    Browse Marketplace
+                  </Button>
+                </Link>
+                <Link href="/land-investment" passHref>
+                  <Button variant="outline" className="w-full justify-start">
+                    <Landmark className="mr-2 h-4 w-4" />
+                    Land Investment
+                  </Button>
+                </Link>
+                <Link href="/auctions" passHref>
+                  <Button variant="outline" className="w-full justify-start">
+                    <BarChart className="mr-2 h-4 w-4" />
+                    Auctions
+                  </Button>
+                </Link>
+                <Link href="/social" passHref>
+                  <Button variant="outline" className="w-full justify-start">
+                    <Users className="mr-2 h-4 w-4" />
+                    Social Feed
+                  </Button>
+                </Link>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Recent Activity</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="flex items-center">
+                  <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                  <p className="text-sm">
+                    New land investment opportunity in Maseru
+                  </p>
+                </div>
+                <div className="flex items-center">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+                  <p className="text-sm">
+                    Your auction listing received a new bid
+                  </p>
+                </div>
+                <div className="flex items-center">
+                  <div className="w-2 h-2 bg-yellow-500 rounded-full mr-2"></div>
+                  <p className="text-sm">
+                    Weather alert: Rain expected tomorrow
+                  </p>
+                </div>
+                <div className="flex items-center">
+                  <div className="w-2 h-2 bg-purple-500 rounded-full mr-2"></div>
+                  <p className="text-sm">3 new connections in your network</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </DashboardLayout>

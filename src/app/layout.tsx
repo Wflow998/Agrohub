@@ -1,5 +1,6 @@
 import { TempoInit } from "@/components/tempo-init";
 import { ThemeProvider } from "@/components/ui/theme-provider";
+import { I18nProvider } from "@/components/i18n-provider";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Script from "next/script";
@@ -8,9 +9,9 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "AgroHub - Agricultural Social Network",
+  title: "AgroHub - Agricultural Social Network for Africa",
   description:
-    "Connect with farmers, distributors, retailers and more in the agricultural ecosystem",
+    "Connect with farmers, distributors, retailers and more in the agricultural ecosystem across South Africa, Kenya, and Lesotho",
 };
 
 export default function RootLayout({
@@ -28,8 +29,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
-          <TempoInit />
+          <I18nProvider>
+            {children}
+            <TempoInit />
+          </I18nProvider>
         </ThemeProvider>
       </body>
     </html>

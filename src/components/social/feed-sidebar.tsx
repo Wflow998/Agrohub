@@ -1,9 +1,8 @@
 import React from "react";
-import { Card } from "../ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import TrendingHashtags from "./trending-hashtags";
 import SuggestedConnections from "./suggested-connections";
-import { WeatherWidget } from "../dashboard/weather-widget";
-import { CropRecommendations } from "../dashboard/crop-recommendations";
+import { MapPin } from "lucide-react";
 
 interface FeedSidebarProps {
   location?: string;
@@ -21,55 +20,29 @@ interface FeedSidebarProps {
 
 const FeedSidebar = ({
   location = "Nairobi, Kenya",
-  hashtags = [
-    { tag: "OrganicFarming", posts: 1243 },
-    { tag: "AgriTech", posts: 876 },
-    { tag: "FarmToTable", posts: 654 },
-    { tag: "Sustainability", posts: 521 },
-    { tag: "LocalProduce", posts: 498 },
-  ],
-  connections = [
-    {
-      id: "1",
-      name: "Maria Rodriguez",
-      role: "Farmer",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=maria",
-      mutualConnections: 5,
-      location: "Eastern Region",
-    },
-    {
-      id: "2",
-      name: "David Kimani",
-      role: "Distributor",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=david",
-      mutualConnections: 3,
-      location: "Central Region",
-    },
-    {
-      id: "3",
-      name: "Sarah Ochieng",
-      role: "Agricultural Expert",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=sarah",
-      mutualConnections: 8,
-      location: "Western Region",
-    },
-  ],
+  hashtags = [],
+  connections = [],
   onTagClick = () => {},
 }: FeedSidebarProps) => {
   return (
-    <div className="space-y-6 bg-background">
-      <WeatherWidget location={location} />
-
-      <CropRecommendations location={location.split(",")[0] + " Region"} />
+    <div className="space-y-6 sticky top-6">
+      {location && (
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg font-semibold flex items-center">
+              <MapPin className="h-4 w-4 mr-2 text-primary" />
+              Your Location
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm">{location}</p>
+          </CardContent>
+        </Card>
+      )}
 
       <TrendingHashtags hashtags={hashtags} onTagClick={onTagClick} />
 
-      <SuggestedConnections
-        connections={connections}
-        title="People to Connect With"
-        showLocation={true}
-        maxDisplay={3}
-      />
+      <SuggestedConnections connections={connections} />
     </div>
   );
 };

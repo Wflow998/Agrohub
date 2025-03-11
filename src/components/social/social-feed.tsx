@@ -9,7 +9,9 @@ import FeedSidebar from "./feed-sidebar";
 import { CreatePost } from "./create-post";
 import { Dialog, DialogContent } from "../ui/dialog";
 import { Button } from "../ui/button";
-import { X, ChevronLeft, ChevronRight } from "lucide-react";
+import { X, ChevronLeft, ChevronRight, FileText } from "lucide-react";
+import { StoryCreator } from "./story-creator";
+import { DocumentViewer } from "../document-viewer";
 
 interface Story {
   id: string;
@@ -21,11 +23,12 @@ interface Story {
   viewed: boolean;
   timestamp: string;
   content?: {
-    type: "image" | "video" | "text";
+    type: "image" | "video" | "text" | "document";
     src?: string;
     text?: string;
     location?: string;
     tags?: string[];
+    documentType?: string;
   }[];
 }
 
@@ -58,58 +61,125 @@ const SocialFeed = ({
   const [activeStoryContentIndex, setActiveStoryContentIndex] = useState(0);
   const [activeUserStories, setActiveUserStories] = useState<Story[]>([]);
 
-  // Mock posts data
+  // Document viewer state
+  const [documentViewerOpen, setDocumentViewerOpen] = useState(false);
+  const [activeDocument, setActiveDocument] = useState<string>("");
+  const [activeDocumentType, setActiveDocumentType] = useState<string>("");
+
+  // Story creator state
+  const [storyCreatorOpen, setStoryCreatorOpen] = useState(false);
+
+  // Mock posts data with South African, Kenyan, and Lesotho content
   const [posts, setPosts] = useState([
     {
       id: "1",
       author: {
-        name: "Maria Rodriguez",
+        name: "Thabo Mofokeng",
         role: "Farmer",
-        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=maria",
+        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=thabo",
       },
       content:
-        "Just harvested our first batch of organic tomatoes for the season! They're looking great and will be available at the marketplace tomorrow. #OrganicFarming #FreshProduce",
+        "Just harvested our first batch of organic tomatoes for the season! They're looking great and will be available at the Cape Town Farmers Market tomorrow. #OrganicFarming #SouthAfricanProduce",
       image:
         "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=800&q=80",
       likes: 24,
       comments: 5,
-      timestamp: "2 hours ago",
+      timestamp: "2023-11-10T14:30:00",
+      location: "Cape Town, South Africa",
+      tags: ["OrganicFarming", "SouthAfricanProduce", "FarmersMarket"],
     },
     {
       id: "2",
       author: {
-        name: "David Kimani",
+        name: "Wanjiku Kamau",
         role: "Distributor",
-        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=david",
+        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=wanjiku",
       },
       content:
-        "Looking for farmers in the Central Region with maize ready for distribution. We have several retailers looking for quality produce. Contact me for details. #Distribution #Maize",
+        "Looking for farmers in the Nairobi Region with maize ready for distribution. We have several retailers looking for quality produce. Contact me for details. #KenyaAgriTech #Maize",
       likes: 18,
       comments: 12,
-      timestamp: "5 hours ago",
+      timestamp: "2023-11-10T09:45:00",
+      location: "Nairobi, Kenya",
+      tags: ["KenyaAgriTech", "Maize", "Distribution"],
     },
     {
       id: "3",
       author: {
-        name: "Sarah Ochieng",
-        role: "Agricultural Expert",
-        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=sarah",
+        name: "Tumelo Lerotholi",
+        role: "Wool Producer",
+        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=tumelo",
       },
       content:
-        "Weather alert: Heavy rains expected in the Eastern Region next week. Farmers should prepare their drainage systems and consider delaying any new plantings. Stay safe! #WeatherAlert #FarmingTips",
+        "Our Merino wool production is up 15% this season thanks to improved farming practices and the excellent climate in the highlands. Proud of our team's hard work! #LesothoWool #HighlandFarming",
+      image:
+        "https://images.unsplash.com/photo-1470137430626-983a37b8ea46?w=800&q=80",
       likes: 42,
       comments: 8,
-      timestamp: "Yesterday",
+      timestamp: "2023-11-09T16:20:00",
+      location: "Maseru, Lesotho",
+      tags: ["LesothoWool", "HighlandFarming", "MerinoWool"],
+    },
+    {
+      id: "4",
+      author: {
+        name: "Sipho Nkosi",
+        role: "Agricultural Consultant",
+        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=sipho",
+      },
+      content:
+        "I've just uploaded our latest report on sustainable farming practices in Southern Africa. This document includes case studies from Lesotho, South Africa, and Botswana. Download and share with your network! #SustainableFarming #AgriResearch",
+      document: "https://africau.edu/images/default/sample.pdf",
+      documentType: "PDF Report",
+      likes: 31,
+      comments: 7,
+      timestamp: "2023-11-08T11:15:00",
+      location: "Johannesburg, South Africa",
+      tags: ["SustainableFarming", "AgriResearch", "CaseStudies"],
+    },
+    {
+      id: "5",
+      author: {
+        name: "Amara Okafor",
+        role: "AgriTech Developer",
+        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=amara",
+      },
+      content:
+        "Check out our new mobile app demo for small-scale farmers! It helps track crop growth, weather patterns, and market prices - all in one place. #AgriTech #FarmingApps",
+      video: "https://example.com/videos/farm-app-demo.mp4",
+      likes: 56,
+      comments: 14,
+      timestamp: "2023-11-07T15:40:00",
+      location: "Lagos, Nigeria",
+      tags: ["AgriTech", "FarmingApps", "SmallScaleFarmers"],
+    },
+    {
+      id: "6",
+      author: {
+        name: "Nandi Mbeki",
+        role: "Agricultural Researcher",
+        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=nandi",
+      },
+      content:
+        "Our research team has compiled a comprehensive guide on drought-resistant farming techniques. This document is free to download and share with farmers in your community. #DroughtResistant #ClimateAdaptation",
+      document:
+        "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      documentType: "Research Guide",
+      likes: 47,
+      comments: 9,
+      timestamp: "2023-11-06T13:20:00",
+      location: "Pretoria, South Africa",
+      tags: ["DroughtResistant", "ClimateAdaptation", "Research"],
     },
   ]);
 
-  // Enhanced stories data with content
+  // Enhanced stories data with content from South Africa, Kenya, and Lesotho
   const stories: Story[] = [
     {
       id: "1",
       user: {
-        name: "Maria Rodriguez",
-        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=maria",
+        name: "Thabo Mofokeng",
+        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=thabo",
         role: "Farmer",
       },
       viewed: false,
@@ -118,21 +188,21 @@ const SocialFeed = ({
         {
           type: "image",
           src: "https://images.unsplash.com/photo-1523741543316-beb7fc7023d8?w=800&q=80",
-          location: "Eastern Region Farm",
+          location: "Cape Town, South Africa",
           tags: ["OrganicFarming", "Tomatoes"],
         },
         {
           type: "text",
           text: "Our tomato harvest is looking amazing this season! 🍅",
-          tags: ["FreshProduce"],
+          tags: ["SouthAfricanProduce"],
         },
       ],
     },
     {
       id: "2",
       user: {
-        name: "David Kimani",
-        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=david",
+        name: "Wanjiku Kamau",
+        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=wanjiku",
         role: "Distributor",
       },
       viewed: false,
@@ -141,18 +211,18 @@ const SocialFeed = ({
         {
           type: "image",
           src: "https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=800&q=80",
-          location: "Central Region Distribution Center",
+          location: "Nairobi, Kenya",
           tags: ["Maize", "Distribution"],
         },
         {
           type: "text",
           text: "Looking for quality maize suppliers! Contact me for details.",
-          tags: ["BusinessOpportunity"],
+          tags: ["KenyaAgriTech"],
         },
         {
           type: "image",
           src: "https://images.unsplash.com/photo-1591086429666-004a4b6a1241?w=800&q=80",
-          location: "Central Region",
+          location: "Nairobi, Kenya",
           tags: ["Logistics", "FarmToTable"],
         },
       ],
@@ -160,103 +230,104 @@ const SocialFeed = ({
     {
       id: "3",
       user: {
-        name: "Sarah Ochieng",
-        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=sarah",
-        role: "Agricultural Expert",
+        name: "Tumelo Lerotholi",
+        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=tumelo",
+        role: "Wool Producer",
       },
       viewed: true,
       timestamp: "8h",
       content: [
         {
           type: "image",
-          src: "https://images.unsplash.com/photo-1516054575922-f0b8eeadec1a?w=800&q=80",
-          location: "Western Region Agricultural Center",
-          tags: ["WeatherAlert", "FarmingTips"],
+          src: "https://images.unsplash.com/photo-1470137430626-983a37b8ea46?w=800&q=80",
+          location: "Maseru, Lesotho",
+          tags: ["LesothoWool", "HighlandFarming"],
         },
         {
           type: "text",
-          text: "⚠️ Weather Alert: Heavy rains expected next week. Prepare your drainage systems!",
-          tags: ["FarmSafety"],
+          text: "Our Merino wool production is thriving in the highlands! 🐑",
+          tags: ["MerinoWool"],
         },
       ],
     },
     {
       id: "4",
       user: {
-        name: "John Mwangi",
-        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=john",
-        role: "Retailer",
+        name: "Sipho Nkosi",
+        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=sipho",
+        role: "Agricultural Consultant",
       },
-      viewed: true,
+      viewed: false,
       timestamp: "12h",
       content: [
         {
-          type: "image",
-          src: "https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=800&q=80",
-          location: "Nairobi Farmers Market",
-          tags: ["FreshProduce", "LocalMarket"],
+          type: "document",
+          src: "https://example.com/documents/sustainable-farming-report.pdf",
+          documentType: "PDF Report",
+          location: "Johannesburg, South Africa",
+          tags: ["SustainableFarming", "AgriResearch"],
+        },
+        {
+          type: "text",
+          text: "Just published our latest research on sustainable farming practices in Southern Africa. Check it out! 📊",
+          tags: ["Research", "Sustainability"],
         },
       ],
     },
     {
       id: "5",
       user: {
-        name: "Elizabeth Wanjiku",
-        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=elizabeth",
-        role: "Farmer",
+        name: "Lindiwe Dlamini",
+        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=lindiwe",
+        role: "Retailer",
       },
-      viewed: false,
+      viewed: true,
       timestamp: "1d",
       content: [
         {
           type: "image",
-          src: "https://images.unsplash.com/photo-1595841696677-6489ff3f8cd1?w=800&q=80",
-          location: "Northern Region Farm",
-          tags: ["Sustainability", "OrganicFarming"],
-        },
-        {
-          type: "text",
-          text: "Our new sustainable irrigation system is up and running! 💧",
-          tags: ["WaterConservation", "AgriTech"],
+          src: "https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=800&q=80",
+          location: "Johannesburg, South Africa",
+          tags: ["FreshProduce", "LocalMarket"],
         },
       ],
     },
   ];
 
-  // Mock trending hashtags
+  // Mock trending hashtags for South Africa, Kenya, and Lesotho
   const trendingHashtags = [
-    { tag: "OrganicFarming", posts: 1243 },
-    { tag: "AgriTech", posts: 876 },
-    { tag: "FarmToTable", posts: 654 },
-    { tag: "Sustainability", posts: 521 },
-    { tag: "LocalProduce", posts: 498 },
+    { tag: "SouthAfricanFarmers", posts: 1243 },
+    { tag: "KenyaAgriTech", posts: 876 },
+    { tag: "LesothoWoolProducers", posts: 654 },
+    { tag: "DroughtResistant", posts: 521 },
+    { tag: "AfricanProduce", posts: 498 },
   ];
 
-  // Mock suggested connections
+  // Mock suggested connections from South Africa, Kenya, and Lesotho
   const suggestedConnections = [
     {
       id: "1",
-      name: "Maria Rodriguez",
+      name: "Thabo Mofokeng",
       role: "Farmer",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=maria",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=thabo",
       mutualConnections: 5,
-      location: "Eastern Region",
+      location: "Cape Town, South Africa",
     },
     {
       id: "2",
-      name: "David Kimani",
+      name: "Wanjiku Kamau",
       role: "Distributor",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=david",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=wanjiku",
       mutualConnections: 3,
-      location: "Central Region",
+      location: "Nairobi, Kenya",
     },
     {
       id: "3",
-      name: "Sarah Ochieng",
-      role: "Agricultural Expert",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=sarah",
+      name: "Tumelo Lerotholi",
+      role: "Wool Producer",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=tumelo",
       mutualConnections: 8,
-      location: "Western Region",
+      location: "Maseru, Lesotho",
     },
   ];
 
@@ -336,30 +407,34 @@ const SocialFeed = ({
         {
           id: `${posts.length + 1}`,
           author: {
-            name: "Michael Omondi",
+            name: "Sipho Nkosi",
             role: "Farmer",
-            avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=michael",
+            avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=sipho",
           },
           content:
-            "Just received my new irrigation system! Can't wait to set it up and improve our farm's efficiency. #AgriTech #Irrigation",
+            "Just received my new irrigation system! Can't wait to set it up and improve our farm's efficiency. #AgriTech #SouthAfrica",
           likes: 15,
           comments: 3,
-          timestamp: "1 day ago",
+          timestamp: "2023-11-09T08:15:00",
+          location: "Durban, South Africa",
+          tags: ["AgriTech", "SouthAfrica", "Irrigation"],
         },
         {
           id: `${posts.length + 2}`,
           author: {
-            name: "Grace Akinyi",
+            name: "Njeri Wainaina",
             role: "Agricultural Expert",
-            avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=grace",
+            avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=njeri",
           },
           content:
-            "Hosting a workshop on sustainable farming practices next weekend. All farmers in the Western Region are welcome to attend! #Sustainability #FarmerEducation",
+            "Hosting a workshop on sustainable farming practices next weekend in Nakuru. All farmers in the region are welcome to attend! #Sustainability #KenyaFarmerEducation",
           image:
             "https://images.unsplash.com/photo-1523741543316-beb7fc7023d8?w=800&q=80",
           likes: 32,
           comments: 7,
-          timestamp: "2 days ago",
+          timestamp: "2023-11-08T14:30:00",
+          location: "Nakuru, Kenya",
+          tags: ["Sustainability", "KenyaFarmerEducation", "Workshop"],
         },
       ];
       setPosts([...posts, ...newPosts]);
@@ -405,11 +480,13 @@ const SocialFeed = ({
   };
 
   const handleCreateStory = () => {
-    // In a real app, this would open a story creator modal
-    alert("Story creation feature would open here");
+    setStoryCreatorOpen(true);
   };
 
-  const handlePostCreated = (content: string) => {
+  const handlePostCreated = (
+    content: string,
+    media?: { type: string; url: string },
+  ) => {
     // Create a new post and add it to the top of the feed
     const newPost = {
       id: `${Date.now()}`,
@@ -419,9 +496,15 @@ const SocialFeed = ({
         avatar: currentUser.avatar,
       },
       content: content,
+      image: media?.type === "image" ? media.url : undefined,
+      video: media?.type === "video" ? media.url : undefined,
+      document: media?.type === "document" ? media.url : undefined,
+      documentType: media?.type === "document" ? "Document" : undefined,
       likes: 0,
       comments: 0,
-      timestamp: "Just now",
+      timestamp: new Date().toISOString(),
+      location: "Maseru, Lesotho", // Default location
+      tags: [],
     };
 
     setPosts([newPost, ...posts]);
@@ -461,6 +544,21 @@ const SocialFeed = ({
         activeUserStories[activeStoryIndex - 1].content?.length || 0;
       setActiveStoryContentIndex(prevStoryContentCount - 1);
     }
+  };
+
+  const handleDocumentClick = (documentUrl: string, documentType: string) => {
+    setActiveDocument(documentUrl);
+    setActiveDocumentType(documentType);
+    setDocumentViewerOpen(true);
+  };
+
+  const handleStoryCreated = (newStory: any) => {
+    // Add the new story to the stories array
+    const updatedStories = [newStory, ...stories];
+    // In a real app, this would call an API to save the story
+    // For now, we'll just update the local state
+    // This is a mock implementation - in a real app, you would update the state properly
+    alert(t("social.storyCreatedSuccess"));
   };
 
   // Render the current story content
@@ -522,9 +620,38 @@ const SocialFeed = ({
           />
         )}
 
+        {content.type === "video" && (
+          <video
+            src={content.src}
+            controls
+            autoPlay
+            className="h-full w-full object-contain"
+          />
+        )}
+
         {content.type === "text" && (
           <div className="bg-gradient-to-b from-primary/80 to-primary p-8 rounded-lg max-w-md text-center">
             <p className="text-white text-xl font-medium">{content.text}</p>
+          </div>
+        )}
+
+        {content.type === "document" && (
+          <div className="bg-white p-6 rounded-lg max-w-md text-center">
+            <FileText className="h-16 w-16 mx-auto mb-4 text-primary" />
+            <p className="text-xl font-medium mb-2">
+              {content.documentType || "Document"}
+            </p>
+            <Button
+              onClick={() =>
+                handleDocumentClick(
+                  content.src || "",
+                  content.documentType || "Document",
+                )
+              }
+              className="mt-4"
+            >
+              View Document
+            </Button>
           </div>
         )}
 
@@ -570,7 +697,7 @@ const SocialFeed = ({
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Social Feed</h1>
         <p className="text-muted-foreground">
-          Connect with the agricultural community
+          Connect with the agricultural community across Africa
         </p>
       </div>
 
@@ -586,10 +713,7 @@ const SocialFeed = ({
           />
 
           {/* Create post component */}
-          <CreatePost
-            user={currentUser}
-            onPostCreated={(content) => handlePostCreated(content)}
-          />
+          <CreatePost user={currentUser} onPostCreated={handlePostCreated} />
 
           {/* Feed filters */}
           <FeedFilters
@@ -616,7 +740,7 @@ const SocialFeed = ({
         {/* Sidebar column */}
         <div className="hidden md:block">
           <FeedSidebar
-            location="Nairobi, Kenya"
+            location="Maseru, Lesotho"
             hashtags={trendingHashtags}
             connections={suggestedConnections}
             onTagClick={handleTagClick}
@@ -630,6 +754,21 @@ const SocialFeed = ({
           {renderStoryContent()}
         </DialogContent>
       </Dialog>
+
+      {/* Document Viewer Dialog */}
+      <Dialog open={documentViewerOpen} onOpenChange={setDocumentViewerOpen}>
+        <DialogContent className="max-w-4xl h-[80vh] p-0">
+          <DocumentViewer file={activeDocument} type="auto" />
+        </DialogContent>
+      </Dialog>
+
+      {/* Story Creator Dialog */}
+      <StoryCreator
+        open={storyCreatorOpen}
+        onOpenChange={setStoryCreatorOpen}
+        onStoryCreated={handleStoryCreated}
+        user={currentUser}
+      />
     </div>
   );
 };

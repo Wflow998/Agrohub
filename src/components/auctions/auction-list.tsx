@@ -11,6 +11,10 @@ import {
   MoreHorizontal,
   Clock,
   DollarSign,
+  Gavel,
+  Tractor,
+  Wheat,
+  Leaf,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -44,21 +48,22 @@ export function AuctionList({ status }: AuctionListProps) {
       category: "Livestock",
       type: "Cattle",
       quantity: 5,
-      startingBid: 1200,
-      currentBid: 1450,
+      startingBid: 25000,
+      currentBid: 28500,
       bidCount: 8,
       endDate: "2023-11-15T14:00:00",
       status: "active",
-      location: "Eastern Region Farm",
+      location: "Cape Town, South Africa",
       image:
         "https://images.unsplash.com/photo-1570042225831-d98fa7577f1e?w=800&q=80",
       description:
         "Healthy dairy cows with excellent milk production history. All vaccinations up to date.",
       seller: {
-        name: "Green Valley Farm",
+        name: "Western Cape Farms",
         rating: 4.8,
         verified: true,
       },
+      currency: "ZAR",
     },
     {
       id: "2",
@@ -66,87 +71,91 @@ export function AuctionList({ status }: AuctionListProps) {
       category: "Livestock",
       type: "Sheep",
       quantity: 12,
-      startingBid: 800,
-      currentBid: 950,
+      startingBid: 15000,
+      currentBid: 18500,
       bidCount: 5,
       endDate: "2023-11-18T16:00:00",
       status: "active",
-      location: "Central Region Farm",
+      location: "Maseru, Lesotho",
       image:
         "https://images.unsplash.com/photo-1484557985045-edf25e08da73?w=800&q=80",
       description:
         "Quality Merino sheep known for premium wool. Healthy and well-maintained.",
       seller: {
-        name: "Highland Pastures",
+        name: "Lesotho Highland Wool",
         rating: 4.6,
         verified: true,
       },
+      currency: "LSL",
     },
     {
       id: "3",
-      title: "Free-Range Chickens",
-      category: "Livestock",
-      type: "Poultry",
-      quantity: 50,
-      startingBid: 300,
-      currentBid: 300,
+      title: "John Deere Tractor",
+      category: "Equipment",
+      type: "Machinery",
+      quantity: 1,
+      startingBid: 450000,
+      currentBid: 450000,
       bidCount: 0,
       endDate: "2023-11-25T12:00:00",
       status: "upcoming",
-      location: "Western Region Farm",
+      location: "Nairobi, Kenya",
       image:
-        "https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=800&q=80",
+        "https://images.unsplash.com/photo-1588862081167-d5b98006637e?w=800&q=80",
       description:
-        "Healthy free-range chickens raised on organic feed. Excellent for egg production.",
+        "Well-maintained John Deere tractor with low hours. Perfect for medium-sized farms.",
       seller: {
-        name: "Sunrise Poultry",
+        name: "Kenya AgriTech Solutions",
         rating: 4.5,
         verified: true,
       },
+      currency: "KES",
     },
     {
       id: "4",
-      title: "Angus Beef Cattle",
-      category: "Livestock",
-      type: "Cattle",
-      quantity: 3,
-      startingBid: 1500,
-      currentBid: 1500,
+      title: "Premium Coffee Beans",
+      category: "Produce",
+      type: "Coffee",
+      quantity: 500,
+      startingBid: 1200,
+      currentBid: 1200,
       bidCount: 0,
       endDate: "2023-11-30T15:00:00",
       status: "upcoming",
-      location: "Northern Region Farm",
+      location: "Eldoret, Kenya",
       image:
-        "https://images.unsplash.com/photo-1527153857715-3908f2bae5e8?w=800&q=80",
+        "https://images.unsplash.com/photo-1611854779393-1b2da9d400fe?w=800&q=80",
       description:
-        "Premium Angus beef cattle. Grass-fed and raised with sustainable farming practices.",
+        "Premium Kenyan coffee beans, freshly harvested. Aromatic with rich flavor profile.",
       seller: {
-        name: "Quality Meats Farm",
+        name: "Kenyan Coffee Cooperative",
         rating: 4.9,
         verified: true,
       },
+      currency: "KES",
     },
     {
       id: "5",
-      title: "Berkshire Pigs",
-      category: "Livestock",
-      type: "Pigs",
-      quantity: 8,
-      startingBid: 900,
-      currentBid: 1100,
+      title: "Irrigation System",
+      category: "Equipment",
+      type: "Irrigation",
+      quantity: 1,
+      startingBid: 35000,
+      currentBid: 42000,
       bidCount: 6,
       endDate: "2023-11-10T10:00:00",
       status: "my-auctions",
-      location: "Your Farm",
+      location: "Johannesburg, South Africa",
       image:
-        "https://images.unsplash.com/photo-1593179357196-ea11a2e7c119?w=800&q=80",
+        "https://images.unsplash.com/photo-1586771107445-d3ca888129ce?w=800&q=80",
       description:
-        "Healthy Berkshire pigs known for their superior meat quality. Well-cared for and ready for sale.",
+        "Complete irrigation system suitable for medium-sized farms. Includes pumps, pipes, and sprinklers.",
       seller: {
         name: "Your Farm",
         rating: 4.7,
         verified: true,
       },
+      currency: "ZAR",
     },
   ];
 
@@ -185,6 +194,36 @@ export function AuctionList({ status }: AuctionListProps) {
     return `${minutes}m left`;
   };
 
+  // Function to get currency symbol
+  const getCurrencySymbol = (currency: string) => {
+    switch (currency) {
+      case "ZAR":
+        return "R";
+      case "KES":
+        return "KSh";
+      case "LSL":
+        return "M";
+      case "USD":
+        return "$";
+      default:
+        return "$";
+    }
+  };
+
+  // Function to get category icon
+  const getCategoryIcon = (category: string) => {
+    switch (category.toLowerCase()) {
+      case "livestock":
+        return <Leaf className="h-4 w-4 mr-1" />;
+      case "equipment":
+        return <Tractor className="h-4 w-4 mr-1" />;
+      case "produce":
+        return <Wheat className="h-4 w-4 mr-1" />;
+      default:
+        return <Gavel className="h-4 w-4 mr-1" />;
+    }
+  };
+
   const [selectedAuction, setSelectedAuction] = React.useState<any>(null);
   const [detailsOpen, setDetailsOpen] = React.useState(false);
 
@@ -209,7 +248,7 @@ export function AuctionList({ status }: AuctionListProps) {
                 <DialogHeader>
                   <DialogTitle>Create New Auction</DialogTitle>
                   <DialogDescription>
-                    Enter details about your livestock auction
+                    Enter details about your auction
                   </DialogDescription>
                 </DialogHeader>
                 <AuctionForm />
@@ -227,7 +266,12 @@ export function AuctionList({ status }: AuctionListProps) {
                   alt={auction.title}
                   className="w-full h-full object-cover transition-transform hover:scale-105"
                 />
-                <Badge className="absolute top-2 right-2">{auction.type}</Badge>
+                <Badge className="absolute top-2 right-2">
+                  <div className="flex items-center">
+                    {getCategoryIcon(auction.category)}
+                    {auction.type}
+                  </div>
+                </Badge>
                 {status === "active" && (
                   <Badge
                     variant="destructive"
@@ -299,7 +343,8 @@ export function AuctionList({ status }: AuctionListProps) {
                   <div className="flex justify-between">
                     <span className="text-sm">Current Bid:</span>
                     <span className="font-medium">
-                      ${auction.currentBid.toFixed(2)}
+                      {getCurrencySymbol(auction.currency)}
+                      {auction.currentBid.toFixed(2)}
                     </span>
                   </div>
                   <div className="flex justify-between">

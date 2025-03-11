@@ -17,20 +17,25 @@ import {
   Briefcase,
   ShoppingBag,
   ChevronDown,
+  Landmark,
 } from "lucide-react";
 
 interface RoleSwitcherProps {
-  currentRole: string;
-  onRoleChange: (role: string) => void;
+  currentRole?: string;
+  onRoleChange?: (role: string) => void;
 }
 
-export function RoleSwitcher({ currentRole, onRoleChange }: RoleSwitcherProps) {
+export function RoleSwitcher({
+  currentRole = "farmer",
+  onRoleChange = () => {},
+}: RoleSwitcherProps) {
   const roles = [
     { id: "farmer", label: "Farmer", icon: Leaf },
     { id: "retailer", label: "Retailer", icon: Store },
     { id: "logistics", label: "Logistics Partner", icon: Truck },
     { id: "distributor", label: "Distributor", icon: Package },
     { id: "service", label: "Service Provider", icon: Briefcase },
+    { id: "investor", label: "Investor", icon: Landmark },
     { id: "consumer", label: "Consumer", icon: ShoppingBag },
   ];
 

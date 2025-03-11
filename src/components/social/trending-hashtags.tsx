@@ -1,7 +1,6 @@
-import React from "react";
-import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
-import { Button } from "../ui/button";
-import { Badge } from "../ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { TrendingUp } from "lucide-react";
 
 interface HashtagProps {
@@ -16,23 +15,21 @@ interface TrendingHashtagsProps {
 
 const TrendingHashtags = ({
   hashtags = [
-    { tag: "OrganicFarming", posts: 1243 },
-    { tag: "AgriTech", posts: 876 },
-    { tag: "FarmToTable", posts: 654 },
-    { tag: "Sustainability", posts: 521 },
-    { tag: "LocalProduce", posts: 498 },
+    { tag: "SouthAfricanFarmers", posts: 1243 },
+    { tag: "KenyaAgriTech", posts: 876 },
+    { tag: "LesothoWoolProducers", posts: 654 },
+    { tag: "DroughtResistant", posts: 521 },
+    { tag: "AfricanProduce", posts: 498 },
   ],
   onTagClick = () => {},
 }: TrendingHashtagsProps) => {
   return (
     <Card className="bg-card">
       <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-lg font-semibold flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-primary" />
-            Trending Hashtags
-          </CardTitle>
-        </div>
+        <CardTitle className="text-lg font-semibold flex items-center gap-2">
+          <TrendingUp className="h-5 w-5 text-primary" />
+          Trending Hashtags
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-3">

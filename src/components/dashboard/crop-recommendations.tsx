@@ -12,7 +12,7 @@ interface CropRecommendationsProps {
 }
 
 export function CropRecommendations({
-  location = "Nairobi Region",
+  location = "Maseru Region",
 }: CropRecommendationsProps) {
   // Mock crop recommendation data - in a real app, this would come from an AI model
   const recommendations = [
