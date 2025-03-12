@@ -16,6 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { useRouter } from "next/navigation";
+import { Logo } from "../ui/logo";
 
 interface HeaderProps {
   user?: {
@@ -53,10 +54,7 @@ export function Header({
             <Menu className="h-5 w-5" />
             <span className="sr-only">Toggle menu</span>
           </Button>
-          <div className="flex items-center gap-2">
-            <Leaf className="h-6 w-6 text-primary" />
-            <span className="text-lg font-bold">AgroHub</span>
-          </div>
+          <Logo size="md" />
         </div>
 
         <div className="hidden md:flex md:flex-1 md:items-center md:justify-center">
@@ -138,20 +136,3 @@ export function Header({
     </header>
   );
 }
-
-const Leaf = ({ className }: { className?: string }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className={className}
-  >
-    <path d="M2 22c1.25-1.25 2.5-2.5 3.5-4 .83-1.25 1.5-2.5 2-4 .5-1.5.5-3 .5-4.5s.08-3 1-4c.92-1 2-1.5 3-1.5s2.17.08 3 1c.83.92 1 2.5 1 4 0 1.5 0 3 .5 4.5.5 1.5 1.17 2.75 2 4 1 1.5 2.25 2.75 3.5 4" />
-    <path d="M12 22c-1.5-1-3-2.5-4.5-4.5S5 13 5 9.5C5 6 6.5 4 9.5 4c1 0 2 .5 2.5 1.5" />
-    <path d="M12 22c1.5-1 3-2.5 4.5-4.5S19 13 19 9.5C19 6 17.5 4 14.5 4c-1 0-2 .5-2.5 1.5" />
-  </svg>
-);

@@ -39,11 +39,6 @@ export function SidebarNav({ className, ...props }: SidebarNavProps) {
 
   const items = [
     {
-      href: "/dashboard",
-      title: t("navigation.dashboard"),
-      icon: <LayoutDashboard className="mr-2 h-4 w-4" />,
-    },
-    {
       href: "/social",
       title: t("navigation.social"),
       icon: <Users className="mr-2 h-4 w-4" />,
@@ -122,6 +117,11 @@ export function SidebarNav({ className, ...props }: SidebarNavProps) {
       href: "/settings",
       title: t("navigation.settings"),
       icon: <Settings className="mr-2 h-4 w-4" />,
+    },
+    {
+      href: "/dashboard",
+      title: t("navigation.dashboard"),
+      icon: <LayoutDashboard className="mr-2 h-4 w-4" />,
     },
   ];
 
