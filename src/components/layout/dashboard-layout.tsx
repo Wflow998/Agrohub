@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useState } from "react";
+import { ReactNode, useState, useEffect } from "react";
 import { Header } from "./header";
 import SidebarNavigation from "./sidebar-navigation";
 import { useRouter } from "next/navigation";
@@ -9,16 +9,23 @@ import { Logo } from "@/components/ui/logo";
 interface DashboardLayoutProps {
   children: ReactNode;
   userRole?: string;
+  onRoleChange?: (role: string) => void;
 }
 
 export function DashboardLayout({
   children,
   userRole = "farmer",
+  onRoleChange,
 }: DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [role, setRole] = useState(userRole);
   const router = useRouter();
+
+  // Update local state when prop changes
+  useEffect(() => {
+    setRole(userRole);
+  }, [userRole]);
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -30,8 +37,36 @@ export function DashboardLayout({
 
   const handleRoleChange = (newRole: string) => {
     setRole(newRole);
-    // Redirect to social feed when role changes
-    router.push("/social");
+    // Call parent handler if provided
+    if (onRoleChange) {
+      onRoleChange(newRole);
+    }
+  };
+
+  // Generate avatar seed based on role
+  const getAvatarSeed = () => {
+    const roleMap: Record<string, string> = {
+      farmer: "john",
+      retailer: "sarah",
+      logistics: "michael",
+      distributor: "david",
+      service: "emma",
+      consumer: "lisa",
+    };
+    return roleMap[role] || "john";
+  };
+
+  // Generate name based on role
+  const getName = () => {
+    const nameMap: Record<string, string> = {
+      farmer: "John Farmer",
+      retailer: "Sarah Retailer",
+      logistics: "Michael Logistics",
+      distributor: "David Distributor",
+      service: "Emma Provider",
+      consumer: "Lisa Consumer",
+    };
+    return nameMap[role] || "John Farmer";
   };
 
   return (
@@ -39,15 +74,28 @@ export function DashboardLayout({
       {/* Sidebar */}
       <SidebarNavigation className="hidden md:block" userRole={role} />
 
+      {/* Mobile sidebar */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-50 md:hidden">
+          <div
+            className="fixed inset-0 bg-black/50"
+            onClick={toggleMobileMenu}
+          ></div>
+          <div className="fixed inset-y-0 left-0 w-[240px] bg-background">
+            <SidebarNavigation userRole={role} />
+          </div>
+        </div>
+      )}
+
       {/* Main Content */}
       <div className="flex flex-col flex-1 overflow-hidden">
         <Header
           onMenuToggle={toggleMobileMenu}
           onRoleChange={handleRoleChange}
           user={{
-            name: "John Farmer",
-            email: "john@agrohub.com",
-            avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=john",
+            name: getName(),
+            email: `${role}@agrohub.com`,
+            avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${getAvatarSeed()}`,
             role: role,
           }}
         />
