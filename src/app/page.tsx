@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
 export default function Home() {
-  // Redirect to the welcome page
   redirect("/welcome");
+  return null; // This line is never reached but satisfies the component requirement
 }
